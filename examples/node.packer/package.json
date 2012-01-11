@@ -1,0 +1,8 @@
+{
+  "name" : "node.flow.packer.example",
+  "version" : "0.0.1",
+  "private" : true,
+  "dependencies" : {
+    "node.packer" : "0.0.5"
+  }
+}
