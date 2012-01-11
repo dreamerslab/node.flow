@@ -37,10 +37,9 @@ Install node.flow through npm
 Start a new flow.
 
 #### Arguments
-
-  - arg1, arg2, ...
-    - type: Function | String | Array | Object | Boolean
-    - desc: arguments to be passed as defaults.
+- arg1, arg2, ...
+  - type: Function | String | Array | Object | Boolean
+  - desc: arguments to be passed as defaults.
 
 #### Example code
 
@@ -51,13 +50,12 @@ Start a new flow.
 Add task to the flow stack.
 
 #### Arguments
-
-  - task:
-    - type: Function
-    - desc: Task function to be called later
-  - arg1, arg2, ...
-    - type: Function | String | Array | Object | Boolean
-    - desc: Arguments to be passed to the task function( optional )
+- task:
+  - type: Function
+  - desc: Task function to be called later
+- arg1, arg2, ...
+  - type: Function | String | Array | Object | Boolean
+  - desc: Arguments to be passed to the task function( optional )
 
 #### Example code
 
@@ -83,7 +81,6 @@ Add task to the flow stack.
 Call the tasks one after another in the stack.
 
 #### Arguments
-
 - callback:
   - type: Function
   - desc: The last callback to be called at the very end after all tasks are done
