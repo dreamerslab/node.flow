@@ -37,25 +37,31 @@ Install node.flow through npm
 Start a new flow.
 
 #### Arguments
-- arg1, arg2, ...
-  - type: Function | String | Array | Object | Boolean
-  - desc: arguments to be passed as defaults.
+
+> arg1, arg2, ...
+
+    type: Function | String | Array | Object | Boolean
+    desc: arguments to be passed as defaults.
 
 #### Example code
 
     var flow = new Flow( 'bibi', 22, true );
 
-### flow.add( task, arg1, arg2, ... );
+### flow.series( task, arg1, arg2, ... );
 
-Add task to the flow stack.
+Add series task to the flow stack.
 
 #### Arguments
-- task:
-  - type: Function
-  - desc: Task function to be called later
-- arg1, arg2, ...
-  - type: Function | String | Array | Object | Boolean
-  - desc: Arguments to be passed to the task function( optional )
+
+> task
+
+    type: Function
+    desc: Task function to be called later
+  
+> arg1, arg2, ...
+
+    type: Function | String | Array | Object | Boolean
+    desc: Arguments to be passed to the task function( optional )
 
 #### Example code
 
@@ -64,7 +70,7 @@ Add task to the flow stack.
 
     // Add a task function, the last argument in the task callback
     // is always the next task
-    flow.add( function( name, sort, next ){
+    flow.series( function( name, sort, next ){
       User.find({
         name : name
       }).sort( sort, -1 ).run( function ( err, users ){
@@ -73,7 +79,7 @@ Add task to the flow stack.
 
     // 'bibi' will be passed to the task function as the first argument `name`
     // and 'created_at' will be the second argument `sort`
-    // you can add as many arguments as you want
+    // you can series as many arguments as you want
     }, 'bibi', 'created_at' );
 
 ### flow.end( callback, arg1, arg2, ... );
@@ -81,12 +87,16 @@ Add task to the flow stack.
 Call the tasks one after another in the stack.
 
 #### Arguments
-- callback:
-  - type: Function
-  - desc: The last callback to be called at the very end after all tasks are done
-- arg1, arg2, ...
-  - type: Function | String | Array | Object | Boolean
-  - desc: Arguments to be passed to the callback function( optional )
+
+> callback
+
+    type: Function
+    desc: The last callback to be called at the very end after all tasks are done
+
+> arg1, arg2, ...
+
+    type: Function | String | Array | Object | Boolean
+    desc: Arguments to be passed to the callback function( optional )
 
 #### Example code
 
@@ -96,8 +106,8 @@ Call the tasks one after another in the stack.
 
     // find users with the given names
     [ 'fifi', 'jenny', 'steffi' ].forEach( function ( name ){
-      // add 3 tasks searching for users
-      flow.add( function( users, name, next ){
+      // series 3 tasks searching for users
+      flow.series( function( users, name, next ){
         User.findOne({
           name : name
         }, function ( err, user ){
@@ -121,20 +131,20 @@ With
 You can either choose to chain your methods or not up to your prefered syntax. Both of the following syntax works.
     
     // chaining all methods
-    flow.add( function (){
+    flow.series( function (){
       // task 1
-    }).add( function (){
+    }).series( function (){
       // task 2
     }).end( function (){
       // all done callback
     });
     
     // seperate all methods
-    flow.add( function (){
+    flow.series( function (){
       // task 1
     });
     
-    flow.add( function (){
+    flow.series( function (){
       // task 2
     }).
     
