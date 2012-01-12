@@ -10,7 +10,7 @@ var flow  = new Flow,
     users = {};
 
 // delete all users before start
-flow.add( function ( next ){
+flow.series( function ( next ){
   User.remove( function ( err, count ){
     next();
   });
@@ -18,16 +18,18 @@ flow.add( function ( next ){
 
 // insert records from source data
 data.users.forEach( function ( user ){
-  flow.add( function ( user, next ){
+  flow.parallel( function ( user, next ){
     new User( user ).save( function ( err, user ){
       next();
     });
   }, user );
 });
 
+flow.join();
+
 // find matching records
 data.names.forEach( function ( name ){
-  flow.add( function( users, name, next ){
+  flow.series( function( users, name, next ){
     User.findOne({
       name : name
     }, function ( err, user ){
