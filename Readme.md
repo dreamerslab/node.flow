@@ -6,9 +6,59 @@ A deadly simple flow control package for node.js
 
 ## Description
 
-The asynchronous nature of javascript is what makes it so powerful. However sometimes you just need to do stuffs synchronously. It is painful to design your application 
+The asynchronous nature of javascript is what makes it so powerful. However sometimes you just need to do stuffs synchronously without blocking the event loop. Stuffs like query database in a loop with ids to assemble a hash, compressing a bunch of files in groups to compare with the old ones. You could easily end up with nested callbacks without using a flow control package. 
 
-It is easily end up with nested callbacks 
+With node.flow you can set a work flow doing things one by one or in parallel, wait for all things are done in the parallel tasks to do the next task. The following code shows some base usage and the syntax of this package.
+
+    // setup db schema and connection
+    require( './setup' );
+
+    var Flow     = require( '../../lib/flow' ),
+        mongoose = require( 'mongoose' ),
+        User     = mongoose.model( 'User' ),
+        data     = require( './data' );
+
+    var flow  = new Flow,
+        users = {};
+
+    // delete all users before start
+    flow.series( function ( next ){
+      User.remove( function ( err, count ){
+        next();
+      });
+    });
+
+    // insert records from source data
+    data.users.forEach( function ( user ){
+      flow.parallel( function ( user, next ){
+        new User( user ).save( function ( err, user ){
+          next();
+        });
+      }, user );
+    });
+
+    // we must set an end point for parallel tasks
+    flow.join();
+
+    // find matching records
+    data.names.forEach( function ( name ){
+      flow.parallel( function( name, ready ){
+        User.findOne({
+          name : name
+        }, function ( err, user ){
+          users[ name ] = user;
+          ready();
+        });
+      }, name );
+    });
+
+    flow.join();
+
+    // print out records and disconnect
+    flow.end( function(){
+      console.log( users );
+      mongoose.disconnect();
+    });
 
 
 
@@ -57,7 +107,7 @@ Add series task to the flow stack.
 
     type: Function
     desc: Task function to be called later
-  
+
 > arg1, arg2, ...
 
     type: Function | String | Array | Object | Boolean
@@ -66,7 +116,7 @@ Add series task to the flow stack.
 #### Example code
 
     var Flow = require( 'node.flow' ),
-        flow = new Flow(),
+        flow = new Flow();
 
     // Add a task function, the last argument in the task callback
     // is always the next task
@@ -123,13 +173,13 @@ Call the tasks one after another in the stack.
     });
 
 ## Arguments merge and overwrite
-  
-With 
+
+With
 
 ## Chainability
 
 You can either choose to chain your methods or not up to your prefered syntax. Both of the following syntax works.
-    
+
     // chaining all methods
     flow.series( function (){
       // task 1
@@ -138,16 +188,16 @@ You can either choose to chain your methods or not up to your prefered syntax. B
     }).end( function (){
       // all done callback
     });
-    
+
     // seperate all methods
     flow.series( function (){
       // task 1
     });
-    
+
     flow.series( function (){
       // task 2
     }).
-    
+
     flow.end( function (){
       // all done callback
     });
