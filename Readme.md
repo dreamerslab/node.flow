@@ -8,57 +8,60 @@ A deadly simple flow control package for node.js
 
 The asynchronous nature of javascript is what makes it so powerful. However sometimes you just need to do stuffs synchronously without blocking the event loop. Stuffs like query database in a loop with ids to assemble a hash, compressing a bunch of files in groups to compare with the old ones. You could easily end up with nested callbacks without using a flow control package. 
 
-With node.flow you can set a work flow doing things one by one or in parallel, wait for all things are done in the parallel tasks to do the next task. The following code shows some base usage and the syntax of this package.
+With node.flow you can set a work flow doing things one by one or in parallel, wait for all things are done in the parallel tasks to do the next task. You can set some default arguments for all tasks, giving each task its own arguments or pass task results to the next task as its arguments. The following code shows some base usage and the syntax of this package.
 
-    // setup db schema and connection
-    require( './setup' );
+```javascript
 
-    var Flow     = require( '../../lib/flow' ),
-        mongoose = require( 'mongoose' ),
-        User     = mongoose.model( 'User' ),
-        data     = require( './data' );
+// setup db schema and connection
+require( './setup' );
 
-    var flow  = new Flow,
-        users = {};
+var Flow     = require( '../../lib/flow' ),
+    mongoose = require( 'mongoose' ),
+    User     = mongoose.model( 'User' ),
+    data     = require( './data' );
 
-    // delete all users before start
-    flow.series( function ( next ){
-      User.remove( function ( err, count ){
-        next();
-      });
+// start a new flow
+var flow  = new Flow,
+    users = {};
+
+// delete all users before start
+flow.series( function ( next ){
+  User.remove( function ( err, count ){
+    next();
+  });
+});
+
+// insert records from source data
+data.users.forEach( function ( user ){
+  flow.parallel( function ( user, next ){
+    new User( user ).save( function ( err, user ){
+      next();
     });
+  }, user );
+});
 
-    // insert records from source data
-    data.users.forEach( function ( user ){
-      flow.parallel( function ( user, next ){
-        new User( user ).save( function ( err, user ){
-          next();
-        });
-      }, user );
+// we must set an end point for parallel tasks
+flow.join();
+
+// find matching records
+data.names.forEach( function ( name ){
+  flow.parallel( function( name, ready ){
+    User.findOne({
+      name : name
+    }, function ( err, user ){
+      users[ name ] = user;
+      ready();
     });
+  }, name );
+});
 
-    // we must set an end point for parallel tasks
-    flow.join();
+flow.join();
 
-    // find matching records
-    data.names.forEach( function ( name ){
-      flow.parallel( function( name, ready ){
-        User.findOne({
-          name : name
-        }, function ( err, user ){
-          users[ name ] = user;
-          ready();
-        });
-      }, name );
-    });
-
-    flow.join();
-
-    // print out records and disconnect
-    flow.end( function(){
-      console.log( users );
-      mongoose.disconnect();
-    });
+// print out records and disconnect
+flow.end( function(){
+  console.log( users );
+  mongoose.disconnect();
+});
 
 
 
@@ -91,7 +94,7 @@ Start a new flow.
 > arg1, arg2, ...
 
     type: Function | String | Array | Object | Boolean
-    desc: arguments to be passed as defaults.
+    desc: arguments to be passed to the new flow as defaults.
 
 #### Example code
 
@@ -124,6 +127,7 @@ Add series task to the flow stack.
       User.find({
         name : name
       }).sort( sort, -1 ).run( function ( err, users ){
+        // call the next series task
         next( users );
       });
 
@@ -174,7 +178,7 @@ Call the tasks one after another in the stack.
 
 ## Arguments merge and overwrite
 
-With
+You can set some default arguments for all tasks, giving each task its own arguments or pass task results to the next task as its arguments. The priority is 
 
 ## Chainability
 
