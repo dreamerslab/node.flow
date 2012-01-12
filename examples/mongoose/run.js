@@ -25,22 +25,25 @@ data.users.forEach( function ( user ){
   }, user );
 });
 
+// we must set an end point for parallel tasks
 flow.join();
 
 // find matching records
 data.names.forEach( function ( name ){
-  flow.series( function( users, name, next ){
+  flow.parallel( function( name, ready ){
     User.findOne({
       name : name
     }, function ( err, user ){
       users[ name ] = user;
-      next( users );
+      ready();
     });
-  }, users, name );
+  }, name );
 });
 
+flow.join();
+
 // print out records and disconnect
-flow.end( function( users ){
+flow.end( function(){
   console.log( users );
   mongoose.disconnect();
 });
