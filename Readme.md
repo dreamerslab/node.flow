@@ -236,7 +236,7 @@ Call the tasks one after another in the stack.
 
 ## Arguments merge and overwrite
 
-You can set some default arguments for all tasks, giving each task its own arguments or pass task results to the next task as its arguments. The priority is `argements from last task` > `argements for each task` > `default argements`. Which means `default argements` will be merge into `argements for each task` and finally merge into `argements from last task` than pass to the next task. However with parallel tasks it works a little different.
+You can set some default arguments for all tasks, giving each task its own arguments or pass task results to the next task as its arguments. The priority is `argements from last task` > `argements for each task` > `default argements`. Which means `default argements` will be merge into `argements for each task` and finally merge into `argements from last task` than pass to the next task. However with parallel tasks it works a little different. Results from parallel tasks will be push to a stack, when all parallel tasks are done the result stack will be the first argument assign to `argements for each task` unless the result stack is empty. Checkout the parallel example for a clear view.
 
 
 
@@ -246,21 +246,36 @@ You can either choose to chain your methods or not up to your personal taste. Bo
 
     // chaining all methods
     flow.series( function (){
-      // task 1
-    }).series( function (){
-      // task 2
-    }).end( function (){
+      // do stuffs ...
+    }).parallel( function (){
+      // do stuffs ...
+    }).parallel( function (){
+      // do stuffs ...
+    }).join().
+    series( function (){
+      // do stuffs ...
+    end( function (){
       // all done callback
     });
 
     // seperate all methods
     flow.series( function (){
-      // task 1
+      // do stuffs ...
     });
 
+    flow.parallel( function (){
+      // do stuffs ...
+    });
+
+    flow.parallel( function (){
+      // do stuffs ...
+    });
+
+    flow.join();
+
     flow.series( function (){
-      // task 2
-    }).
+      // do stuffs ...
+    });
 
     flow.end( function (){
       // all done callback
@@ -272,7 +287,7 @@ You can either choose to chain your methods or not up to your personal taste. Bo
 
 ### series
 
-> Demonstrate the basic usage of series task and syntax. We use setTimeout to simulate a time consuming io operation.
+> Demonstrate the basic usage of series task and syntax. We use setTimeout to simulate a time consuming io operation. We can see how the arguments are merged and overwrote
 
     $ cd /path/to/node.flow/examples/series
     $ node run.js
@@ -295,7 +310,7 @@ You can either choose to chain your methods or not up to your personal taste. Bo
 
 ### node.packer
 
-> Demonstrate how to compress a bunch of files in groups and compare with the old ones. If
+> Demonstrate how to compress a bunch of files in groups and compare with the old ones. If its the same use the old one, if not use the new one with a new timestamp.
 
     $ cd /path/to/node.flow/examples/node.packer
     $ npm install -lf
