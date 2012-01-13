@@ -6,62 +6,60 @@ A deadly simple flow control package for node.js
 
 ## Description
 
-The asynchronous nature of javascript is what makes it so powerful. However sometimes you just need to do stuffs synchronously without blocking the event loop. Stuffs like query database in a loop with ids to assemble a hash, compressing a bunch of files in groups to compare with the old ones. You could easily end up with nested callbacks without using a flow control package. 
+The asynchronous nature of javascript is what makes it so powerful. However sometimes you just need to do stuffs synchronously without blocking the event loop. Stuffs like query database in a loop with ids to assemble a hash, compressing a bunch of files in groups and compare with the old ones. You could easily end up with nested callbacks without using a flow control package.
 
 With node.flow you can set a work flow doing things one by one or in parallel, wait for all things are done in the parallel tasks to do the next task. You can set some default arguments for all tasks, giving each task its own arguments or pass task results to the next task as its arguments. The following code shows some base usage and the syntax of this package.
 
-```javascript
+    // setup db schema and connection
+    require( './setup' );
 
-// setup db schema and connection
-require( './setup' );
+    var Flow     = require( '../../lib/flow' ),
+        mongoose = require( 'mongoose' ),
+        User     = mongoose.model( 'User' ),
+        data     = require( './data' );
 
-var Flow     = require( '../../lib/flow' ),
-    mongoose = require( 'mongoose' ),
-    User     = mongoose.model( 'User' ),
-    data     = require( './data' );
+    // start a new flow
+    var flow  = new Flow,
+        users = {};
 
-// start a new flow
-var flow  = new Flow,
-    users = {};
-
-// delete all users before start
-flow.series( function ( next ){
-  User.remove( function ( err, count ){
-    next();
-  });
-});
-
-// insert records from source data
-data.users.forEach( function ( user ){
-  flow.parallel( function ( user, next ){
-    new User( user ).save( function ( err, user ){
-      next();
+    // delete all users before start
+    flow.series( function ( next ){
+      User.remove( function ( err, count ){
+        next();
+      });
     });
-  }, user );
-});
 
-// we must set an end point for parallel tasks
-flow.join();
-
-// find matching records
-data.names.forEach( function ( name ){
-  flow.parallel( function( name, ready ){
-    User.findOne({
-      name : name
-    }, function ( err, user ){
-      users[ name ] = user;
-      ready();
+    // insert records from source data
+    data.users.forEach( function ( user ){
+      flow.parallel( function ( user, next ){
+        new User( user ).save( function ( err, user ){
+          next();
+        });
+      }, user );
     });
-  }, name );
-});
 
-flow.join();
+    // we must set an end point for parallel tasks
+    flow.join();
 
-// print out records and disconnect
-flow.end( function(){
-  console.log( users );
-  mongoose.disconnect();
-});
+    // find matching records
+    data.names.forEach( function ( name ){
+      flow.parallel( function( name, ready ){
+        User.findOne({
+          name : name
+        }, function ( err, user ){
+          users[ name ] = user;
+          ready();
+        });
+      }, name );
+    });
+
+    flow.join();
+
+    // print out records and disconnect
+    flow.end( function(){
+      console.log( users );
+      mongoose.disconnect();
+    });
 
 
 
@@ -85,6 +83,8 @@ Install node.flow through npm
 
     var Flow = require( 'node.flow' );
 
+
+
 ### new Flow( arg1, arg2, ... );
 
 Start a new flow.
@@ -100,6 +100,8 @@ Start a new flow.
 
     var flow = new Flow( 'bibi', 22, true );
 
+
+
 ### flow.series( task, arg1, arg2, ... );
 
 Add series task to the flow stack.
@@ -109,12 +111,12 @@ Add series task to the flow stack.
 > task
 
     type: Function
-    desc: Task function to be called later
+    desc: Task function to be called in series.
 
 > arg1, arg2, ...
 
     type: Function | String | Array | Object | Boolean
-    desc: Arguments to be passed to the task function( optional )
+    desc: Arguments to be passed to the task function( optional ).
 
 #### Example code
 
@@ -135,6 +137,60 @@ Add series task to the flow stack.
     // and 'created_at' will be the second argument `sort`
     // you can series as many arguments as you want
     }, 'bibi', 'created_at' );
+
+
+
+### flow.parallel( task, arg1, arg2, ... );
+
+Add parallel task to the flow stack.
+
+#### Arguments
+
+> callback
+
+    type: Function
+    desc: Task function to be called in parallel.
+
+> arg1, arg2, ...
+
+    type: Function | String | Array | Object | Boolean
+    desc: Arguments to be passed to the task function( optional ).
+
+#### Example code
+
+    var Flow = require( 'node.flow' ),
+        flow = new Flow();
+
+    flow.parallel( function( name, sort, ready ){
+      User.find({
+        name : name
+      }).sort( sort, -1 ).run( function ( err, users ){
+        ready( users );
+      });
+    }, 'bibi', 'created_at' );
+
+
+
+### flow.join();
+
+Set an end point for a group of parallel tasks.
+
+#### Example code
+
+    var Flow = require( 'node.flow' ),
+        flow = new Flow();
+
+    flow.parallel( function( name, sort, ready ){
+      User.find({
+        name : name
+      }).sort( sort, -1 ).run( function ( err, users ){
+        ready( users );
+      });
+    }, 'bibi', 'created_at' );
+
+    flow.join();
+
+
 
 ### flow.end( callback, arg1, arg2, ... );
 
@@ -176,13 +232,17 @@ Call the tasks one after another in the stack.
       console.log( users );
     });
 
+
+
 ## Arguments merge and overwrite
 
-You can set some default arguments for all tasks, giving each task its own arguments or pass task results to the next task as its arguments. The priority is 
+You can set some default arguments for all tasks, giving each task its own arguments or pass task results to the next task as its arguments. The priority is `argements from last task` > `argements for each task` > `default argements`. Which means `default argements` will be merge into `argements for each task` and finally merge into `argements from last task` than pass to the next task. However with parallel tasks it works a little different.
+
+
 
 ## Chainability
 
-You can either choose to chain your methods or not up to your prefered syntax. Both of the following syntax works.
+You can either choose to chain your methods or not up to your personal taste. Both of the following syntax works.
 
     // chaining all methods
     flow.series( function (){
@@ -210,16 +270,23 @@ You can either choose to chain your methods or not up to your prefered syntax. B
 
 > Checkout the `examples` folder for more details.
 
-### simple
+### series
 
-> Demonstrate some basic usage and syntax. We use setTimeout to simulate a time consuming io operation.
+> Demonstrate the basic usage of series task and syntax. We use setTimeout to simulate a time consuming io operation.
 
-    $ cd /path/to/node.flow/examples/simple
+    $ cd /path/to/node.flow/examples/series
+    $ node run.js
+
+### parallel
+
+> Demonstrate the basic usage of parallel task and syntax.
+
+    $ cd /path/to/node.flow/examples/parallel
     $ node run.js
 
 ### mongoose
 
-> Demonstrate how to clear the documents before inserting a bunch of records then finding some records with given conditions in a loop and show them without writing nested callbacks.
+> Demonstrate how to clear the documents before inserting a bunch of records then finding some records with given conditions in a loop and show them without writing nested callbacks. Use both series and parallel tasks.
 
     # make sure your mongoDB is on
     $ cd /path/to/node.flow/examples/mongoose
@@ -228,7 +295,7 @@ You can either choose to chain your methods or not up to your prefered syntax. B
 
 ### node.packer
 
-> Demonstrate
+> Demonstrate how to compress a bunch of files in groups and compare with the old ones. If
 
     $ cd /path/to/node.flow/examples/node.packer
     $ npm install -lf
