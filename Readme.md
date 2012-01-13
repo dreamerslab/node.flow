@@ -289,7 +289,7 @@ You can either choose to chain your methods or not up to your personal taste. Bo
 
 ### series
 
-> Demonstrate the basic usage of series task and syntax. We use setTimeout to simulate a time consuming io operation. We can see how the arguments are merged and overwrote
+> Demonstrate the basic usage of series task and syntax. We use setTimeout to simulate a time consuming io operation. We can see how the arguments are merged and overwrote in the example.
 
     $ cd /path/to/node.flow/examples/series
     $ node run.js
