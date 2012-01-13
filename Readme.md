@@ -216,16 +216,18 @@ Call the tasks one after another in the stack.
 
     // find users with the given names
     [ 'fifi', 'jenny', 'steffi' ].forEach( function ( name ){
-      // series 3 tasks searching for users
-      flow.series( function( users, name, next ){
+      // assign 3 parallel tasks searching for users
+      flow.parallel( function( users, name, ready ){
         User.findOne({
           name : name
         }, function ( err, user ){
           users[ name ] = user;
-          next( users );
+          ready();
         });
-      }, name, users )
+      }, users, name )
     });
+
+    flow.join();
 
     // print out the search results
     flow.end( function( users ){
