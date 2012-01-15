@@ -1,21 +1,79 @@
-var packer = require( 'node.packer' ),
-    Flow   = require( 'node.flow' );
+var fs     = require( 'fs' ),
+    path   = require( 'path' ),
+    packer = require( 'node.packer' ),
+    rmdir  = require( 'rmdirr' ),
+    Flow   = require( '../../lib/flow' );
+
+var css = {
+  lib : [ 'reset', 'reset-html5' ],
+  common : [ 'base', 'header', 'footer' ]
+};
+
+var js = {
+  lib : [ 'dojo', 'jquery', 'prototype' ],
+  app : [ 'models', 'views', 'actions' ]
+};
+
+var target_dir = __dirname + '/assets/',
+    src_dir    = __dirname + '/src/';
+
+var build = function ( flow, packer, assets, type, target_dir, src_dir ){
+  var group, input;
+
+  for( group in assets ){
+    // building input files
+    input = [];
+    assets[ group ].forEach( function ( asset ){
+      input.push( src_dir + asset + '.' + type ) ;
+    });
+
+    flow.parallel( function ( arg, ready ){
+      arg.callback = function ( err, stdout, stderr ){
+        if( err ) throw err;
+        ready();
+      };
+
+      packer( arg );
+    }, {
+      input : input,
+      output : target_dir + group + '.' + type,
+      type : type
+    });
+  }
+};
 
 
 
-flow = new Flow({
+var flow = new Flow({
   log : true,
-  input : input,
-  output : BASE_DIR + 'tmp/' + group + '.' + type,
   minify : true,
-  callback : each // = function ( err, stdout, stderr ){};
+  uglify : false
 });
 
-packer({
-  log : true,
-  type : type,
-  input : input,
-  output : BASE_DIR + 'tmp/' + group + '.' + type,
-  minify : true,
-  callback : each // = function ( err, stdout, stderr ){};
+flow.
+
+// check if the dir exist, if it does remove it
+series( function ( args, next ){
+  if( path.existsSync( target_dir )){
+    rmdir( target_dir, function ( err, dirs, files ){
+      if( err ) throw err;
+      next();
+    });
+  }else{
+    next();
+  }
+}).
+
+// create assets dir
+series( function ( args, next ){
+  fs.mkdirSync( target_dir );
+  next();
+});
+
+// build assets
+build( flow, packer, css, 'css', target_dir, src_dir );
+build( flow, packer, js, 'js', target_dir, src_dir );
+
+flow.join().end( function (){
+  console.log( 'All done, go checkout the assets folder :)' );
 });

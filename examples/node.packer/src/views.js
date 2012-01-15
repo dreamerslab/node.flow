@@ -1,0 +1,1 @@
+var views = 'some ocean views';

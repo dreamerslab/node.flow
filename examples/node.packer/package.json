@@ -3,6 +3,7 @@
   "version" : "0.0.1",
   "private" : true,
   "dependencies" : {
-    "node.packer" : "0.0.5"
+    "node.packer" : "0.0.6",
+    "rmdirr" : "0.0.1"
   }
 }
