@@ -312,7 +312,7 @@ You can either choose to chain your methods or not up to your personal taste. Bo
 
 ### node.packer
 
-> Demonstrate how to compress a bunch of files in groups and compare with the old ones. If its the same use the old one, if not use the new one with a new timestamp.
+> Demonstrate how to compress a bunch of files in groups.
 
     $ cd /path/to/node.flow/examples/node.packer
     $ npm install -lf
