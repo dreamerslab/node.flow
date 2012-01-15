@@ -1,15 +1,11 @@
-var mongoose, Schema, ObjectId, User;
+var mongoose = require( 'mongoose' );
+var Schema   = mongoose.Schema;
+var ObjectId = Schema.ObjectId;
 
-mongoose = require( 'mongoose' );
-Schema   = mongoose.Schema;
-ObjectId = Schema.ObjectId;
-
-
-
-User = new Schema({
+var User = new Schema({
 
   name : { type : String, required : true, index: true },
-  
+
   email : { type : String, required : true, index: true },
 
   created_at : { type : Date, 'default' : Date.now }

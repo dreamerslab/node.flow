@@ -13,14 +13,14 @@ With node.flow you can set a work flow doing things one by one or in parallel, w
     // setup db schema and connection
     require( './setup' );
 
-    var Flow     = require( '../../lib/flow' ),
-        mongoose = require( 'mongoose' ),
-        User     = mongoose.model( 'User' ),
-        data     = require( './data' );
+    var Flow     = require( '../../lib/flow' );
+    var mongoose = require( 'mongoose' );
+    var User     = mongoose.model( 'User' );
+    var data     = require( './data' );
 
     // start a new flow
-    var flow  = new Flow,
-        users = {};
+    var flow  = new Flow;
+    var users = {};
 
     // delete all users before start
     flow.series( function ( next ){
@@ -120,8 +120,8 @@ Add series task to the flow stack.
 
 #### Example code
 
-    var Flow = require( 'node.flow' ),
-        flow = new Flow();
+    var Flow = require( 'node.flow' );
+    var flow = new Flow();
 
     // Add a task function, the last argument in the task callback
     // is always the next task
@@ -158,8 +158,8 @@ Add parallel task to the flow stack.
 
 #### Example code
 
-    var Flow = require( 'node.flow' ),
-        flow = new Flow();
+    var Flow = require( 'node.flow' );
+    var flow = new Flow();
 
     flow.parallel( function( name, sort, ready ){
       User.find({
@@ -177,8 +177,8 @@ Set an end point for a group of parallel tasks.
 
 #### Example code
 
-    var Flow = require( 'node.flow' ),
-        flow = new Flow();
+    var Flow = require( 'node.flow' );
+    var flow = new Flow();
 
     flow.parallel( function( name, sort, ready ){
       User.find({
@@ -210,9 +210,9 @@ Call the tasks one after another in the stack.
 
 #### Example code
 
-    var Flow = require( 'node.flow' ),
-        flow = new Flow(),
-        users = {};
+    var Flow = require( 'node.flow' );
+    var flow = new Flow();
+    var users = {};
 
     // find users with the given names
     [ 'fifi', 'jenny', 'steffi' ].forEach( function ( name ){

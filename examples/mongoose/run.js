@@ -1,13 +1,13 @@
 // setup db schema and connection
 require( './setup' );
 
-var Flow     = require( '../../lib/flow' ),
-    mongoose = require( 'mongoose' ),
-    User     = mongoose.model( 'User' ),
-    data     = require( './data' );
+var Flow     = require( '../../lib/flow' );
+var mongoose = require( 'mongoose' );
+var User     = mongoose.model( 'User' );
+var data     = require( './data' );
 
-var flow  = new Flow,
-    users = {};
+var flow  = new Flow;
+var users = {};
 
 // delete all users before start
 flow.series( function ( next ){

@@ -1,1 +1,1 @@
-module.exports = require('./lib/flow');
+module.exports = require( './lib/flow' );

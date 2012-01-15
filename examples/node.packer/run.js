@@ -1,8 +1,8 @@
-var fs     = require( 'fs' ),
-    path   = require( 'path' ),
-    packer = require( 'node.packer' ),
-    rmdir  = require( 'rmdirr' ),
-    Flow   = require( '../../lib/flow' );
+var fs     = require( 'fs' );
+var path   = require( 'path' );
+var packer = require( 'node.packer' );
+var rmdir  = require( 'rmdirr' );
+var Flow   = require( '../../lib/flow' );
 
 var css = {
   lib : [ 'reset', 'reset-html5' ],
@@ -14,8 +14,8 @@ var js = {
   app : [ 'models', 'views', 'actions' ]
 };
 
-var target_dir = __dirname + '/assets/',
-    src_dir    = __dirname + '/src/';
+var target_dir = __dirname + '/assets/';
+var src_dir    = __dirname + '/src/';
 
 var build = function ( flow, packer, assets, type, target_dir, src_dir ){
   var group, input;
@@ -50,10 +50,8 @@ var flow = new Flow({
   uglify : false
 });
 
-flow.
-
 // check if the dir exist, if it does remove it
-series( function ( args, next ){
+flow.series( function ( args, next ){
   if( path.existsSync( target_dir )){
     rmdir( target_dir, function ( err, dirs, files ){
       if( err ) throw err;
