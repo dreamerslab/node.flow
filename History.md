@@ -1,6 +1,12 @@
+## 0.0.3 / 2012-01-16
+
+  - [bug fix] Clear arguments passed from ready method before running the next task
+
+
+
 ## 0.0.2 / 2012-01-16
 
-  - Merge arguments from parallel tasks and pass to the next task
+  - [bug fix] Merge arguments from parallel tasks and pass to the next task
 
 
 
