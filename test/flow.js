@@ -168,23 +168,23 @@ module.exports = {
         x.should.equal( 11 );
         y.should.equal( 10 );
         z.should.equal( 55 );
-        next( 1000 );
+        next( 1000, 57 );
       }, 100 );
     }, 9, 10, 55 ).
 
     parallel( function ( x, y, z, ready ){
       setTimeout( function (){
         x.should.equal( 1000 );
-        y.should.equal( 6 );
+        y.should.equal( 57 );
         z.should.equal( 7 );
         ready( 11, 12 );
       }, 200 );
-    }, 7 ).
+    }, 27 ).
 
     parallel( function ( x, y, z, ready ){
       setTimeout( function (){
-        x.should.equal( 9 );
-        y.should.equal( 10 );
+        x.should.equal( 1000 );
+        y.should.equal( 57 );
         z.should.equal( 55 );
         ready( 1000 );
       }, 100 );
