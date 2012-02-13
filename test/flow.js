@@ -172,19 +172,83 @@ module.exports = {
       }, 100 );
     }, 9, 10, 55 ).
 
-    parallel( function ( x, y, z, ready ){
+    parallel( function ( from_series, x, y, z, ready ){
       setTimeout( function (){
-        x.should.equal( 1000 );
-        y.should.equal( 57 );
+        // from series we have an obj as from_series
+        from_series.should.eql({
+          '0' : 1000,
+          '1' : 57
+        });
+
+        x.should.equal( 88 );
+        y.should.equal( 6 );
+        z.should.equal( 7 );
+        ready( 17, 18 );
+      }, 200 );
+    }, 88 ).
+
+    parallel( function ( from_series, x, y, z, ready ){
+      setTimeout( function (){
+        from_series.should.eql({
+          '0' : 1000,
+          '1' : 57
+        });
+
+        x.should.equal( 99 );
+        y.should.equal( 1110 );
+        z.should.equal( 53 );
+        ready( 1010 );
+      }, 100 );
+    }, 99, 1110, 53 ).
+
+    parallel( function ( from_series, x, y, z, ready ){
+      setTimeout( function (){
+        from_series.should.eql({
+          '0' : 1000,
+          '1' : 57
+        });
+
+        x.should.equal( 5 );
+        y.should.equal( 6 );
+        z.should.equal( 7 );
+        ready( 373 );
+      }, 210 );
+    }).
+
+    join().
+
+    parallel( function ( from_parallel, x, y, z, ready ){
+      setTimeout( function (){
+        // from parallel we have an array as from_parallel
+        from_parallel.should.eql([{
+          '0' : 1010
+        }, {
+          '0' : 17,
+          '1' : 18
+        }, {
+          '0' : 373
+        }]);
+
+        x.should.equal( 27 );
+        y.should.equal( 6 );
         z.should.equal( 7 );
         ready( 11, 12 );
       }, 200 );
     }, 27 ).
 
-    parallel( function ( x, y, z, ready ){
+    parallel( function ( from_parallel, x, y, z, ready ){
       setTimeout( function (){
-        x.should.equal( 1000 );
-        y.should.equal( 57 );
+        from_parallel.should.eql([{
+          '0' : 1010
+        }, {
+          '0' : 17,
+          '1' : 18
+        }, {
+          '0' : 373
+        }]);
+
+        x.should.equal( 9 );
+        y.should.equal( 10 );
         z.should.equal( 55 );
         ready( 1000 );
       }, 100 );
