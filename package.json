@@ -7,6 +7,9 @@
   "dependencies": {
     "node.extend" : ""
   },
+  "devDependencies": {
+    "should"   : "0.5.1"
+  },
   "repository": {
     "type": "git",
     "url" : "https://github.com/dreamerslab/node.flow.git"
