@@ -13,7 +13,9 @@ flow.parallel( function ( x, y, z, ready ){
     console.log( 'z : ' + z + '\n' );
     ready( 11, 12 );
   }, 200 );
-}, 7 ).parallel( function ( x, y, z, ready ){
+}, 7 ).
+
+parallel( function ( x, y, z, ready ){
   setTimeout( function (){
     console.log( 'second task ---------------' );
     // default value of x is 5, and was overwritten to 9
@@ -23,8 +25,11 @@ flow.parallel( function ( x, y, z, ready ){
     console.log( 'z : ' + z + '\n' );
     ready( 1000 );
   }, 100 );
-}, 9, 10, 55 ).join().
-end( function ( from_parallel, x, y, z, next ){
+}, 9, 10, 55 ).
+
+join().
+
+end( function ( from_parallel, x, y, z ){
   setTimeout( function (){
     console.log( 'all finished callback ---------------' );
     console.log( 'from_parallel : ' + JSON.stringify( from_parallel ));
