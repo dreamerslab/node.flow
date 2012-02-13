@@ -1,3 +1,11 @@
+## 0.1.0 / 2012-02-13
+
+  - [bug fix] Cant pass arguments to parallel fn from series fn
+  - Read version number from package.json
+  - Added basic test
+
+
+
 ## 0.0.3 / 2012-01-16
 
   - [bug fix] Clear arguments passed from ready method before running the next task
