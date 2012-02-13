@@ -1,3 +1,10 @@
+## 1.0.0 / 2012-02-14
+
+  - [bug fix] Parallel arguments from last stack should be overwritten by default arguments
+  - Added full test
+
+
+
 ## 0.1.0 / 2012-02-13
 
   - [bug fix] Cant pass arguments to parallel fn from series fn
