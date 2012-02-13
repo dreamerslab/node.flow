@@ -1,10 +1,221 @@
-var flow   = require( '../lib/flow' );
+var Flow   = require( '../lib/flow' );
 var should = require( 'should' );
 
 module.exports = {
 
   'test .version' : function ( callback ){
-    flow.version.should.match( /^\d+\.\d+\.\d+$/ );
+    Flow.version.should.match( /^\d+\.\d+\.\d+$/ );
+
+    console.log( 'version test passed' );
     callback();
+  },
+
+  'series with default' : function ( callback ){
+    var flow = new Flow( 5, 6, 7 );
+
+    flow.series( function ( x, y, z, next ){
+      setTimeout( function (){
+        x.should.equal( 7 );
+        y.should.equal( 6 );
+        z.should.equal( 7 );
+        next( 11 );
+      }, 200 );
+    }, 7 ).
+
+    series( function ( x, y, z, next ){
+      setTimeout( function (){
+        x.should.equal( 11 );
+        y.should.equal( 10 );
+        z.should.equal( 55 );
+        next( 1000 );
+      }, 100 );
+    }, 9, 10, 55 ).
+
+    end( function ( x ){
+      setTimeout( function (){
+        x.should.equal( 1000 );
+
+        console.log( 'series with default passed' );
+        callback();
+      }, 150 );
+    });
+  },
+
+  'series without default' : function ( callback ){
+    var flow = new Flow();
+
+    flow.series( function ( x, next ){
+      setTimeout( function (){
+        x.should.equal( 7 );
+        next( 11 );
+      }, 200 );
+    }, 7 ).
+
+    series( function ( x, y, z, next ){
+      setTimeout( function (){
+        x.should.equal( 11 );
+        y.should.equal( 10 );
+        z.should.equal( 55 );
+        next( 1000 );
+      }, 100 );
+    }, 9, 10, 55 ).
+
+    end( function ( x ){
+      setTimeout( function (){
+        x.should.equal( 1000 );
+
+        console.log( 'series without default passed' );
+        callback();
+      }, 150 );
+    });
+  },
+
+  'parallel with default' : function ( callback ){
+    var flow = new Flow( 5, 6, 7 );
+
+    flow.parallel( function ( x, y, z, ready ){
+      setTimeout( function (){
+        x.should.equal( 7 );
+        y.should.equal( 6 );
+        z.should.equal( 7 );
+        ready( 11, 12 );
+      }, 200 );
+    }, 7 ).
+
+    parallel( function ( x, y, z, ready ){
+      setTimeout( function (){
+        x.should.equal( 9 );
+        y.should.equal( 10 );
+        z.should.equal( 55 );
+        ready( 1000 );
+      }, 100 );
+    }, 9, 10, 55 ).
+
+    join().
+
+    end( function ( from_parallel, x, y, z, next ){
+      setTimeout( function (){
+        from_parallel.should.eql([{
+          '0' : 1000
+        }, {
+          '0' : 11,
+          '1' : 12
+        }]);
+
+        x.should.equal( 700 );
+        y.should.equal( 6 );
+        z.should.equal( 7 );
+
+        console.log( 'parallel with default passed' );
+        callback();
+      }, 150 );
+    }, 700 );
+  },
+
+
+  'parallel without default' : function ( callback ){
+    var flow = new Flow();
+
+    flow.parallel( function ( x, ready ){
+      setTimeout( function (){
+        x.should.equal( 7 );
+        ready( 11, 12 );
+      }, 200 );
+    }, 7 ).
+
+    parallel( function ( x, y, z, ready ){
+      setTimeout( function (){
+        x.should.equal( 9 );
+        y.should.equal( 10 );
+        z.should.equal( 55 );
+        ready( 1000 );
+      }, 100 );
+    }, 9, 10, 55 ).
+
+    join().
+
+    end( function ( from_parallel, x, next ){
+      setTimeout( function (){
+        from_parallel.should.eql([{
+          '0' : 1000
+        }, {
+          '0' : 11,
+          '1' : 12
+        }]);
+
+        x.should.equal( 700 );
+
+        console.log( 'parallel without default passed' );
+        callback();
+      }, 150 );
+    }, 700 );
+  },
+
+  'mixed with default' : function ( callback ){
+    var flow = new Flow( 5, 6, 7 );
+
+    flow.series( function ( x, y, z, next ){
+      setTimeout( function (){
+        x.should.equal( 7 );
+        y.should.equal( 6 );
+        z.should.equal( 7 );
+        next( 11 );
+      }, 200 );
+    }, 7 ).
+
+    series( function ( x, y, z, next ){
+      setTimeout( function (){
+        x.should.equal( 11 );
+        y.should.equal( 10 );
+        z.should.equal( 55 );
+        next( 1000 );
+      }, 100 );
+    }, 9, 10, 55 ).
+
+    parallel( function ( x, y, z, ready ){
+      setTimeout( function (){
+        x.should.equal( 1000 );
+        y.should.equal( 6 );
+        z.should.equal( 7 );
+        ready( 11, 12 );
+      }, 200 );
+    }, 7 ).
+
+    parallel( function ( x, y, z, ready ){
+      setTimeout( function (){
+        x.should.equal( 9 );
+        y.should.equal( 10 );
+        z.should.equal( 55 );
+        ready( 1000 );
+      }, 100 );
+    }, 9, 10, 55 ).
+
+    join().
+
+    series( function ( from_parallel, x, y, z, next ){
+      setTimeout( function (){
+        from_parallel.should.eql([{
+          '0' : 1000
+        }, {
+          '0' : 11,
+          '1' : 12
+        }]);
+
+        x.should.equal( 31 );
+        y.should.equal( 72 );
+        z.should.equal( 4 );
+
+        next( 0 );
+      }, 100 );
+    }, 31, 72, 4 ).
+
+    end( function ( x ){
+      setTimeout( function (){
+        x.should.equal( 0 );
+
+        console.log( 'mixed with default passed' );
+        callback();
+      }, 150 );
+    }, 700 );
   }
 };
