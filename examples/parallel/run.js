@@ -11,7 +11,7 @@ flow.parallel( function ( x, y, z, ready ){
     console.log( 'x : ' + x );
     console.log( 'y : ' + y );
     console.log( 'z : ' + z + '\n' );
-    ready( 11 );
+    ready( 11, 12 );
   }, 200 );
 }, 7 ).parallel( function ( x, y, z, ready ){
   setTimeout( function (){
@@ -27,8 +27,7 @@ flow.parallel( function ( x, y, z, ready ){
 end( function ( from_parallel, x, y, z, next ){
   setTimeout( function (){
     console.log( 'all finished callback ---------------' );
-    console.log( 'par1 : ' + from_parallel[ 0 ][ 0 ] );
-    console.log( 'par2 : ' + from_parallel[ 1 ][ 0 ] );
+    console.log( 'from_parallel : ' + JSON.stringify( from_parallel ));
     console.log( 'x : ' + x );
     console.log( 'y : ' + y );
     console.log( 'z : ' + z + '\n' );
