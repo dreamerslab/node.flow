@@ -112,7 +112,6 @@ module.exports = {
     }, 700 );
   },
 
-
   'parallel without default' : function ( callback ){
     var flow = new Flow();
 
@@ -254,7 +253,7 @@ module.exports = {
       }, 100 );
     }, 9, 10, 55 ).
 
-    join().
+    join( true ).
 
     series( function ( from_parallel, x, y, z, next ){
       setTimeout( function (){
@@ -273,13 +272,84 @@ module.exports = {
       }, 100 );
     }, 31, 72, 4 ).
 
-    end( function ( x ){
+    series( function ( x, y, z, next ){
       setTimeout( function (){
         x.should.equal( 0 );
+        y.should.equal( 6 );
+        z.should.equal( 7 );
+
+        next( 20 );
+      }, 100 );
+    }).
+
+    series( function ( x, y, z, next ){
+      setTimeout( function (){
+        x.should.equal( 20 );
+        y.should.equal( 6 );
+        z.should.equal( 7 );
+
+        next( 70 );
+      }, 100 );
+    }).
+
+    end( function ( x ){
+      setTimeout( function (){
+        x.should.equal( 70 );
 
         console.log( 'mixed with default passed' );
         callback();
       }, 150 );
     }, 700 );
+  },
+
+  'mixed without default' : function ( callback ){
+    var flow = new Flow();
+
+    flow.series( function ( next ){
+      setTimeout( function (){
+        next( 11 );
+      }, 200 );
+    }).
+
+    series( function ( x, next ){
+      setTimeout( function (){
+        x.should.equal( 11 );
+        next( 1000 );
+      }, 100 );
+    }).
+
+    parallel( function ( from_series, x, ready ){
+      setTimeout( function (){
+        from_series.should.eql({
+          '0' : 1000
+        });
+
+        x.should.equal( 7 );
+        ready( 11 );
+      }, 200 );
+    }, 7 ).
+
+    parallel( function ( from_series, ready ){
+      setTimeout( function (){
+        from_series.should.eql({
+          '0' : 1000
+        });
+
+        ready();
+      }, 100 );
+    }).
+
+    join().
+
+    end( function ( from_parallel, next ){
+      setTimeout( function (){
+        from_parallel.should.eql([{
+          '0' : 11
+        }]);
+
+        console.log( 'mixed without default passed' );
+        callback();
+      }, 150 );
+    });
   }
 };
