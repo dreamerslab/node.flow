@@ -18,9 +18,9 @@ var target_dir = __dirname + '/assets/';
 var src_dir    = __dirname + '/src/';
 
 var build = function ( flow, packer, assets, type, target_dir, src_dir ){
-  var group, input;
+  var input;
 
-  for( group in assets ){
+  Object.keys( assets ).forEach( function ( group ){
     // building input files
     input = [];
     assets[ group ].forEach( function ( asset ){
@@ -39,7 +39,7 @@ var build = function ( flow, packer, assets, type, target_dir, src_dir ){
       output : target_dir + group + '.' + type,
       type : type
     });
-  }
+  });
 };
 
 
