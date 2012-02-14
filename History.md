@@ -1,3 +1,12 @@
+## 1.1.0 / 2012-02-14
+
+  - [new feature] Pass is_parallel to have better look args from last stack
+  - [refactoring] Use Object.keys forEAch instead of for in
+  - [update packages] mongoose->2.5.7 for test
+  - Added more tests
+
+
+
 ## 1.0.0 / 2012-02-14
 
   - [bug fix] Parallel arguments from last stack should be overwritten by default arguments
@@ -9,7 +18,7 @@
 
   - [bug fix] Cant pass arguments to parallel fn from series fn
   - Read version number from package.json
-  - Added basic test
+  - Added basic tests
 
 
 
