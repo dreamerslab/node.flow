@@ -7,7 +7,6 @@ flow.parallel( function ( x, y, z, ready ){
   // simulates a time consuming io operation
   setTimeout( function (){
     console.log( 'first task ---------------' );
-    // default value of x is 5, now is overwritten to 7
     console.log( 'x : ' + x );
     console.log( 'y : ' + y );
     console.log( 'z : ' + z + '\n' );
@@ -18,8 +17,6 @@ flow.parallel( function ( x, y, z, ready ){
 parallel( function ( x, y, z, ready ){
   setTimeout( function (){
     console.log( 'second task ---------------' );
-    // default value of x is 5, and was overwritten to 9
-    // but finally is overwritten from previous stack `next` to 11
     console.log( 'x : ' + x );
     console.log( 'y : ' + y );
     console.log( 'z : ' + z + '\n' );
@@ -27,7 +24,7 @@ parallel( function ( x, y, z, ready ){
   }, 100 );
 }, 9, 10, 55 ).
 
-join().
+join( true ).
 
 end( function ( from_parallel, x, y, z ){
   setTimeout( function (){
