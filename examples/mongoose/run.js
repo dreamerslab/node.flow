@@ -1,3 +1,4 @@
+// make sure your mongodb is on
 // setup db schema and connection
 require( './setup' );
 
@@ -29,6 +30,7 @@ data.users.forEach( function ( user ){
 flow.join();
 
 // find matching records
+// 'fifi', 'jenny', 'steffi'
 data.names.forEach( function ( name ){
   flow.parallel( function( name, ready ){
     User.findOne({
@@ -40,7 +42,7 @@ data.names.forEach( function ( name ){
   }, name );
 });
 
-flow.join();
+flow.join( true );
 
 // print out records and disconnect
 flow.end( function(){
