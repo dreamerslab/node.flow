@@ -1,3 +1,9 @@
+## 1.1.1 / 2012-03-31
+
+  - [refactoring] Error handling when no parallel task assigned before calling `join`
+
+
+
 ## 1.1.0 / 2012-02-14
 
   - [new feature] Pass is_parallel to have better look args from last stack
