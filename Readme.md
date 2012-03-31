@@ -31,9 +31,9 @@ With node.flow you can set a work flow doing things one by one or in parallel, w
 
     // insert records from source data
     data.users.forEach( function ( user ){
-      flow.parallel( function ( user, next ){
+      flow.parallel( function ( user, ready ){
         new User( user ).save( function ( err, user ){
-          next();
+          ready();
         });
       }, user );
     });
