@@ -52,7 +52,7 @@ var flow = new Flow({
 
 // check if the dir exist, if it does remove it
 flow.series( function ( args, next ){
-  if( path.existsSync( target_dir )){
+  if( fs.existsSync( target_dir )){
     rmdir( target_dir, function ( err, dirs, files ){
       if( err ) throw err;
       next();
