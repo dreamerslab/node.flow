@@ -1,5 +1,11 @@
 # History
 
+## 1.1.3 / 2012-07-23
+
+- Update examples
+
+
+
 ## 1.1.2 / 2012-07-19
 
 - [refactoring] `.end()` deos not need to take a callback
