@@ -192,6 +192,28 @@ Set an end point for a group of parallel tasks.
 
 
 
+### flow.error( callback );
+
+Error handler for in case there is any.
+
+#### Arguments
+
+> callback
+
+    type: Function
+    desc: Error handler to break the flow.
+
+#### Example code
+
+    var Flow = require( 'node.flow' );
+    var flow = new Flow();
+
+    flow.error( function ( err ){
+      console.log( err );
+    });
+
+
+
 ### flow.end( callback, arg1, arg2, ... );
 
 Call the tasks one after another in the stack.
