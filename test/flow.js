@@ -351,5 +351,40 @@ module.exports = {
         callback();
       }, 150 );
     });
+  },
+
+  'error handeling' : function ( callback ){
+    var flow = new Flow( 5, 6, 7 );
+
+    flow.series( function ( x, y, z, next ){
+      setTimeout( function (){
+        x.should.equal( 7 );
+        y.should.equal( 6 );
+        z.should.equal( 7 );
+        next( new Error( 'Error found' ));
+      }, 200 );
+    }, 7 ).
+
+    series( function ( x, y, z, next ){
+      setTimeout( function (){
+        x.should.equal( 11 );
+        y.should.equal( 10 );
+        z.should.equal( 55 );
+        next( 1000 );
+      }, 100 );
+    }, 9, 10, 55 ).
+
+    error( function ( err ){
+      console.log( 'error handeling', err );
+    }).
+
+    end( function ( x ){
+      setTimeout( function (){
+        x.should.equal( 1000 );
+
+        console.log( 'this shouldn\t be seen' );
+        callback();
+      }, 150 );
+    });
   }
 };
