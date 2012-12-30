@@ -1,5 +1,18 @@
 # History
 
+## 1.2.1 / 2012-12-30
+
+- [refactoring] Catch error when first argument is an instance of Error
+- [update packages] should->1.2.1
+
+
+
+## 1.2.0 / 2012-11-21
+
+- [new feature] Add error handler
+
+
+
 ## 1.1.3 / 2012-07-23
 
 - Update examples
