@@ -361,7 +361,7 @@ module.exports = {
         x.should.equal( 7 );
         y.should.equal( 6 );
         z.should.equal( 7 );
-        next( new Error( 'Error found' ));
+        next( new Error( 'Error found' ), 11, 22, 89 );
       }, 200 );
     }, 7 ).
 
@@ -374,8 +374,8 @@ module.exports = {
       }, 100 );
     }, 9, 10, 55 ).
 
-    error( function ( err ){
-      console.log( 'error handeling', err );
+    error( function ( err, x ){
+      console.log( 'error handeling', arguments );
     }).
 
     end( function ( x ){
