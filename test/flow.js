@@ -375,7 +375,7 @@ module.exports = {
     }, 9, 10, 55 ).
 
     error( function ( err, x ){
-      console.log( 'error handeling', arguments );
+      console.log( 'pass error handeling', arguments );
     }).
 
     end( function ( x ){
