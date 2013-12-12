@@ -1,5 +1,17 @@
 # History
 
+## 1.2.3 / 2013-12-12
+
+- [update packages] node.extend->1.0.8, should->2.1.1
+
+
+
+## 1.2.2 / 2012-12-31
+
+- [refactoring] Passing variable to error handler
+
+
+
 ## 1.2.1 / 2012-12-30
 
 - [refactoring] Catch error when first argument is an instance of Error
