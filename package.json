@@ -5,7 +5,7 @@
   "keywords"    : [ "flow", "node.flow", "flow control", "async", "sync", "steps" ],
   "author"      : "dreamerslab <ben@dreamerslab.com>",
   "dependencies": {
-    "node.extend" : "1.0.8"
+    "node.extend" : "^1.1.17"
   },
   "devDependencies": {
     "should": "2.1.1"
